@@ -45,7 +45,7 @@ Use the dropdown selector at the top right to switch between `Provider` and `Cli
 
 ### Backend
 
-- https://mockapi.io/ is used for the mock api
+- https://mockapi.io/ is used for the mock api, so the internet access is required to run this app.
 
 ## Future Advancements
 
