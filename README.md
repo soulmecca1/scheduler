@@ -43,6 +43,10 @@ Use the dropdown selector at the top right to switch between `Provider` and `Cli
 - Click an existing appointment (purple ones) to delete it.
 - Temporary appointments that are not confirmed within 30 minutes will disappear from the calendar.
 
+### Backend
+
+- https://mockapi.io/ is used for the mock api
+
 ## Future Advancements
 
 #### Support multiple providers and clients
