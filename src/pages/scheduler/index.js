@@ -107,19 +107,14 @@ const Scheduler = () => {
         
     },[providerSchedule, appointments])
 
-    // Create timer for temp appointments and then remove it when it's due. 
+    // Clean up the timer.
     useEffect(() => {
-        const timers = Object.keys(tempAppointments).map(id => 
-            setTimeout(() => {
-                const tempData = {...tempAppointments}
-                delete tempData[id]
-                setTempAppointments(tempData)
-                setCurrentEvents(events => events.filter(event => event.id !== id))
-            }, isLoadingDeleteClientAppointment)) // 30 min in milliseconds
-
-        return () => {
-            timers.forEach(timer => clearTimeout(timer))
+        const cleanup = () => {
+            for (const id in tempAppointments) {
+                clearTimeout(tempAppointments[id].timeout)
+            }
         }
+        return cleanup
     }, [tempAppointments])
 
     // Used to decided if the new event is 24 hours in advance.
@@ -127,6 +122,14 @@ const Scheduler = () => {
         const now = dayjs()
         const hoursDifference = dayjs(start).diff(now, 'hour')
         return hoursDifference >= 24
+    }
+
+    const deleteTempAppointment = (id) => {
+        const newTempAppointments = { ... tempAppointments }
+        delete newTempAppointments[id]
+        
+        setTempAppointments(newTempAppointments)
+        setCurrentEvents((prevEvents) => prevEvents.filter(event => event.id !== id))
     }
 
     // For client, new appointments should be made 24 hours in advance.
@@ -142,7 +145,10 @@ const Scheduler = () => {
                     return 
                 } else {
                     const id = uuidv4()
-                    setTempAppointments(prev => ({...prev, [id]: {start, end}}))
+                    const timer = setTimeout(() => {
+                        deleteTempAppointment(id)
+                    },30 * 60 * 1000); // 30 minutes in milliseconds
+                    setTempAppointments(prev => ({...prev, [id]: {start, end, timer}}))
                     setCurrentEvents((prev) => [...prev, {id, start, end, color: 'mediumaquamarine', title: 'Temp appointment'}])
                 }
             } else {
@@ -198,15 +204,16 @@ const Scheduler = () => {
             
             if (currentView.current === Views.MONTH ) {
                 alert('Please use Week or Day view for making schedules')
-            } else {
-                // Disallowing appointments from outside the provider's schedule
-                if (currentMode === 'client' && !providerScheduleMap.current[start]) {
-                    return 
-                } 
+                return
+            } 
 
-                futureEvent.current = {start, end}
-                setIsCreationModalOpen(true)
+            if (currentMode === 'client' && !providerScheduleMap.current[start]) {
+                return // Slot is outside provider's schedule for client
             }
+
+            futureEvent.current = {start, end}
+            setIsCreationModalOpen(true)
+            
         },
         [currentMode]
       )
@@ -220,7 +227,6 @@ const Scheduler = () => {
     // if they are temp appointments, open the modal to get the confirmation of the creation. 
     // if they are permanent ones, open the modal to get the confirmation of the deletion.
     const handleSelectEvent = (event) => {
-        // Handling temp event.
         futureEvent.current= event
         if (Object.keys(tempAppointments).length !== 0 && tempAppointments[event.id]) {
             setIsConfirmModalOpen(true)
