@@ -84,6 +84,7 @@ const Scheduler = () => {
   };
 
   const updateProviderScheduleMap = useCallback((providerData) => {
+    providerScheduleMap.current = {};
     providerData.forEach(({ start, end }) => {
       createTimeSlots(start, end, 15);
     });
