@@ -76,3 +76,4 @@ Use the dropdown selector at the top right to switch between `Provider` and `Cli
 #### Support edge cases
 
 - Ensure consistent updates on the client side when a provider changes the schedule.
+- Prevent Overlapping Events for Providers

@@ -264,14 +264,22 @@ const Scheduler = () => {
   // Month view is only for display.
   // Skipping disalbed slots.
   const handleSelectSlot = useCallback(
-    ({ start, end }) => {
+    ({ start, end, slots }) => {
       if (currentView.current === Views.MONTH) {
         alert("Please use Week or Day view for making schedules");
         return;
       }
 
-      if (currentMode === "client" && !providerScheduleMap.current[start]) {
-        return; // Slot is outside provider's schedule for client
+      if (currentMode === "client") {
+        if (!providerScheduleMap.current[start]) {
+          return; // Slot is outside provider's schedule for client
+        }
+
+        // Allowing only one slot selection
+        if (slots.length > 2) {
+          alert("Please select only one slot");
+          return;
+        }
       }
 
       futureEvent.current = { start, end };
