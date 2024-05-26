@@ -37,7 +37,7 @@ Use the dropdown selector at the top right to switch between `Provider` and `Cli
 
 - Disabled slots are greyed out (according to the Provider's schedule).
 - Available slots are white.
-- Click an available slot or click and drag down an available slot to create an appointment.
+- Click an available slot to create an appointment.
 - When a client's event is first created, it will be a temporary appointment that will expire in 30 minutes if not confirmed (temporary appointments are colored light green).
 - Click a temporary appointment to confirm and save it on the backend.
 - Click an existing appointment (purple ones) to delete it.
